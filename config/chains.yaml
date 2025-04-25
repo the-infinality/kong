@@ -1,13 +1,6 @@
 
 chains: [
-  'mainnet',
-  'optimism',
-  'gnosis',
-  'polygon',
-  'sonic',
-  'fantom',
-  'base',
-  'mode',
-  'arbitrum',
-  'bera'
+  # 'mainnet',
+  'plume',
+  'plume_testnet'
 ]
