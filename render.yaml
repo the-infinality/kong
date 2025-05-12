@@ -11,7 +11,7 @@ services:
   - type: redis
     name: redis-starter-gql
     region: ohio
-    plan: starter
+    plan: free
     maxmemoryPolicy: allkeys-lru # recommended for gql
     ipAllowList:
       - source: 0.0.0.0/0
@@ -21,7 +21,7 @@ services:
     name: ingest-v-2
     region: ohio
     runtime: node
-    plan: standard
+    plan: starter
     buildCommand: bun install
     startCommand: (cd packages/ingest && bun run production)
     envVars:
