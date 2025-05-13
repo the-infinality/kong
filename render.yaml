@@ -40,7 +40,7 @@ services:
           property: port
 
 databases:
-  # A basic-4gb database instance with one read replica
+  # If deploying the DB for the first time you must install the TimescaleDB Extension
   - name: kong-db # Required
     postgresMajorVersion: '16' # Default: most recent supported version
     region: ohio # Default: oregon

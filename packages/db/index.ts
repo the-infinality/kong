@@ -16,6 +16,14 @@ export function migrate({ host, port, user, password, database }: { host: string
         user,
         password,
         database
+      },
+      prod: {
+        driver: 'postgresql',
+        host,
+        port,
+        user,
+        password,
+        database
       }
     }
   })
