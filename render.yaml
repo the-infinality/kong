@@ -38,3 +38,19 @@ services:
           type: redis
           name: redis-starter-ingest-2
           property: port
+
+databases:
+  # A basic-4gb database instance with one read replica
+  - name: kong-db # Required
+    postgresMajorVersion: '16' # Default: most recent supported version
+    region: ohio # Default: oregon
+    plan: free # Default: basic-256mb
+    databaseName: kong # Default: generated value based on name
+    user: spice # Default: generated value based on name
+    # ipAllowList: # Default: allows all connections
+    #   - source: 203.0.113.4/30
+    #     description: office
+    #   - source: 198.51.100.1
+    #     description: home
+    # readReplicas: # Default: does not add any read replicas
+    #   - name: prod-replica
