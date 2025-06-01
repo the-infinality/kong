@@ -78,17 +78,77 @@ export const customChains = {
       },
     },
     testnet: false,
+  }),
+
+  plume: /*#__PURE__*/ defineChain({
+    id: 98_866,
+    name: 'Plume',
+    nativeCurrency: {
+      name: 'Plume',
+      symbol: 'PLUME',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.plume.org'],
+        webSocket: ['wss://rpc.plume.org'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Blockscout',
+        url: 'https://explorer.plume.org',
+        apiUrl: 'https://explorer.plume.org/api',
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 48_577,
+      },
+    },
+  }),
+
+  'plume_testnet': /*#__PURE__*/ defineChain({
+    id: 98_867,
+    name: 'Plume Testnet',
+    testnet: true,
+    nativeCurrency: {
+      name: 'Plume',
+      symbol: 'PLUME',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://testnet-rpc.plume.org'],
+        webSocket: ['wss://testnet-rpc.plume.org'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Blockscout',
+        url: 'https://testnet-explorer.plume.org',
+        apiUrl: 'https://testnet-explorer.plume.org/api',
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: '0xcA11bde05977b3631167028862bE2a173976CA11',
+        blockCreated: 199_712,
+      },
+    },
+    sourceId: 11_155_111
   })
 }
 
 const viemchains = { arbitrum, base, fantom, gnosis, mainnet, optimism, polygon, ...customChains }
 
-interface YamlConfig { chains: string [] }
+interface YamlConfig { chains: string[] }
 
 const yamlPath = (() => {
   const local = path.join(__dirname, '../../config', 'chains.local.yaml')
   const production = path.join(__dirname, '../../config', 'chains.yaml')
-  if(fs.existsSync(local)) return local
+  if (fs.existsSync(local)) return local
   return production
 })()
 
@@ -96,7 +156,7 @@ const yamlFile = fs.readFileSync(yamlPath, 'utf8')
 const config = yaml.load(yamlFile) as YamlConfig
 const chains = config.chains.map(name => {
   const viemchain = viemchains[name as keyof typeof viemchains]
-  if(!viemchain) throw new Error(`chain not found, ${name}`)
+  if (!viemchain) throw new Error(`chain not found, ${name}`)
   return viemchain
 })
 

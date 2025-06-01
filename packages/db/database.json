@@ -1,3 +1,14 @@
 {
-  "dev": "postgres://user:password@localhost:5432/user"
+  "dev": "postgres://user:password@localhost:5432/user",
+  "prod": {
+    "driver": "postgresql",
+    "user": "spice",
+    "password": { "ENV": "DB_PASSWORD" },
+    "host": "dpg-d0hbbtq4d50c73bclspg-a.ohio-postgres.render.com",
+    "port": 5432,
+    "database": "kong_ivo1",
+    "ssl": {
+      "rejectUnauthorized": false
+    }
+  }
 }
