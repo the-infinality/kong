@@ -1,0 +1,8 @@
+spork:
+  - chainId: 98866
+    address: '0xdddD73F5Df1F0DC31373357beAC77545dC5A6f3F'
+    assetId: PUSDUSD
+  - chainId: 98867
+    address: '0x1E0E030AbCb4f07de629DCCEa458a271e0E82624'
+    defaultPrice: '1000000000000000000'
+    assetId: PUSDUSD
