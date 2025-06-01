@@ -111,7 +111,7 @@ export default class Probe implements Processor {
 
     const result: { [key: string]: object } = {}
     for (const row of dbStatusRows) result[row.property] = row.value
-    return { db: result}
+    return { db: result }
   }
 
   private async probeQueues() {
@@ -120,7 +120,7 @@ export default class Probe implements Processor {
       redis: {} as ProbeResults['redis']
     }
 
-    for(const queue of Object.values(this.queues)) {
+    for (const queue of Object.values(this.queues)) {
       result.queues.push({
         name: queue.name,
         waiting: await queue.count(),
@@ -135,7 +135,7 @@ export default class Probe implements Processor {
 
     result.redis = {
       version: redisInfo.redis_version,
-      mode: redisInfo.redis_mode,
+      mode: redisInfo.redis_mode || 'standalone',
       os: redisInfo.os,
       uptime: +redisInfo.uptime_in_seconds,
       clients: +redisInfo.connected_clients,
@@ -201,9 +201,11 @@ export default class Probe implements Processor {
   }
 
   private async probeIndexStats() {
-    return { indexStats: {
-      ...await this.fetchTotals(),
-      eventCounts: await this.fetchEventCounts()
-    }}
+    return {
+      indexStats: {
+        ...await this.fetchTotals(),
+        eventCounts: await this.fetchEventCounts()
+      }
+    }
   }
 }
