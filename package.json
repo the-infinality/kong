@@ -25,6 +25,7 @@
     "bun-types": "^1.2.1"
   },
   "dependencies": {
+    "@libsql/darwin-arm64": "^0.5.7",
     "@types/bun": "^1.2.2"
   }
 }
