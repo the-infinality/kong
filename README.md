@@ -200,7 +200,7 @@ Kong resources are managed monorepo style using a workspace.
 
 `packages/terminal` - cli app for interacting with kong at runtime
 
-`packages/web` - gqphql api and runtime dash
+`packages/web` - graphql api and runtime dashboard
 
 
 ## Architecture
