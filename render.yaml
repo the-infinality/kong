@@ -6,6 +6,13 @@ services:
     region: ohio
     plan: starter
     maxmemoryPolicy: noeviction # recommended for message queues
+    ipAllowList: []
+
+  - type: redis
+    name: redis-starter-gql
+    region: ohio
+    plan: free
+    maxmemoryPolicy: allkeys-lru # recommended for gql
     ipAllowList:
       - source: 0.0.0.0/0
         description: everywhere
@@ -14,9 +21,9 @@ services:
     name: ingest-v-2
     region: ohio
     runtime: node
-    plan: standard
-    buildCommand: yarn
-    startCommand: yarn workspace ingest production
+    plan: starter
+    buildCommand: bun install
+    startCommand: (cd packages/ingest && bun run production)
     envVars:
       - fromGroup: kong
       - key: NODE_VERSION
