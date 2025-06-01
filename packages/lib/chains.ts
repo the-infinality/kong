@@ -90,15 +90,15 @@ export const customChains = {
     },
     rpcUrls: {
       default: {
-        http: ['https://rpc.plumenetwork.xyz'],
-        webSocket: ['wss://rpc.plumenetwork.xyz'],
+        http: ['https://rpc.plume.org'],
+        webSocket: ['wss://rpc.plume.org'],
       },
     },
     blockExplorers: {
       default: {
         name: 'Blockscout',
-        url: 'https://explorer.plumenetwork.xyz',
-        apiUrl: 'https://explorer.plumenetwork.xyz/api',
+        url: 'https://explorer.plume.org',
+        apiUrl: 'https://explorer.plume.org/api',
       },
     },
     contracts: {
@@ -120,15 +120,15 @@ export const customChains = {
     },
     rpcUrls: {
       default: {
-        http: ['https://testnet-rpc.plumenetwork.xyz'],
-        webSocket: ['wss://testnet-rpc.plumenetwork.xyz'],
+        http: ['https://testnet-rpc.plume.org'],
+        webSocket: ['wss://testnet-rpc.plume.org'],
       },
     },
     blockExplorers: {
       default: {
         name: 'Blockscout',
-        url: 'https://testnet-explorer.plumenetwork.xyz',
-        apiUrl: 'https://testnet-explorer.plumenetwork.xyz/api',
+        url: 'https://testnet-explorer.plume.org',
+        apiUrl: 'https://testnet-explorer.plume.org/api',
       },
     },
     contracts: {
@@ -143,12 +143,12 @@ export const customChains = {
 
 const viemchains = { arbitrum, base, fantom, gnosis, mainnet, optimism, polygon, ...customChains }
 
-interface YamlConfig { chains: string [] }
+interface YamlConfig { chains: string[] }
 
 const yamlPath = (() => {
   const local = path.join(__dirname, '../../config', 'chains.local.yaml')
   const production = path.join(__dirname, '../../config', 'chains.yaml')
-  if(fs.existsSync(local)) return local
+  if (fs.existsSync(local)) return local
   return production
 })()
 
@@ -156,7 +156,7 @@ const yamlFile = fs.readFileSync(yamlPath, 'utf8')
 const config = yaml.load(yamlFile) as YamlConfig
 const chains = config.chains.map(name => {
   const viemchain = viemchains[name as keyof typeof viemchains]
-  if(!viemchain) throw new Error(`chain not found, ${name}`)
+  if (!viemchain) throw new Error(`chain not found, ${name}`)
   return viemchain
 })
 
