@@ -76,47 +76,70 @@ export const customChains = {
     },
     testnet: false,
   }),
-
-
-  katana: /*#__PURE__*/ defineChain({
-    id: 747474,
-    name: 'Katana',
+  plumeTestnet: /*#__PURE__*/ defineChain({
+    id: 98_867,
+    name: 'Plume Testnet',
+    testnet: true,
     nativeCurrency: {
+      name: 'Plume',
+      symbol: 'PLUME',
       decimals: 18,
-      name: 'Ether',
-      symbol: 'ETH',
     },
     rpcUrls: {
-      default: { http: ['https://rpc.katanarpc.com'] },
+      default: {
+        http: ['https://testnet-rpc.plume.org'],
+        webSocket: ['wss://testnet-rpc.plume.org'],
+      },
     },
     blockExplorers: {
       default: {
-        name: 'Katana Explorer',
-        url: 'https://explorer.katanarpc.com',
+        name: 'Blockscout',
+        url: 'https://testnet-explorer.plume.org',
+        apiUrl: 'https://testnet-explorer.plume.org/api',
+      },
+    },
+    contracts: {
+      multicall3: {
+        address: "0xcA11bde05977b3631167028862bE2a173976CA11",
+        blockCreated: 199712,
+      },
+    },
+    sourceId: 11_155_111
+  }),
+
+  plume: /*#__PURE__*/ defineChain({
+    id: 98_866,
+    name: 'Plume Mainnet',
+    nativeCurrency: {
+      name: 'Plume',
+      symbol: 'PLUME',
+      decimals: 18,
+    },
+    rpcUrls: {
+      default: {
+        http: ['https://rpc.plume.org'],
+        webSocket: ['wss://rpc.plume.org'],
+      },
+    },
+    blockExplorers: {
+      default: {
+        name: 'Blockscout',
+        url: 'https://explorer.plume.org',
+        apiUrl: 'https://explorer.plume.org/api',
       },
     },
     contracts: {
       multicall3: {
         address: '0xcA11bde05977b3631167028862bE2a173976CA11',
-        blockCreated: 1898013,
+        blockCreated: 48_577,
       },
     },
-    testnet: false,
   })
 }
 
 const chains = [
-  mainnet,
-  optimism,
-  gnosis,
-  polygon,
-  customChains.sonic,
-  fantom,
-  base,
-  customChains.mode,
-  arbitrum,
-  customChains.bera,
-  customChains.katana
+  customChains.plume,
+  customChains.plumeTestnet
 ]
 
 export default chains
