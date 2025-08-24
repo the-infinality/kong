@@ -39,12 +39,41 @@ services:
           name: redis-starter-ingest-2
           property: port
 
+  - type: redis
+    name: redis-starter-ingest-2a
+    region: ohio
+    plan: starter
+    maxmemoryPolicy: noeviction # recommended for message queues
+    ipAllowList: []
+
+  - type: worker
+    name: ingest-v-2a
+    region: ohio
+    runtime: node
+    plan: starter
+    buildCommand: bun install
+    startCommand: (cd packages/ingest && bun run production)
+    envVars:
+      - fromGroup: kong
+      - key: NODE_VERSION
+        value: lts
+      - key: REDIS_HOST
+        fromService:
+          type: redis
+          name: redis-starter-ingest-2a
+          property: host
+      - key: REDIS_PORT
+        fromService:
+          type: redis
+          name: redis-starter-ingest-2a
+          property: port
+
 databases:
   # If deploying the DB for the first time you must install the TimescaleDB Extension
   - name: kong-db # Required
     postgresMajorVersion: '16' # Default: most recent supported version
     region: ohio # Default: oregon
-    plan: free # Default: basic-256mb
+    plan: basic-256mb # Default: basic-256mb
     databaseName: kong # Default: generated value based on name
     user: spice # Default: generated value based on name
     # ipAllowList: # Default: allows all connections
