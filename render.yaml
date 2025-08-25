@@ -54,9 +54,11 @@ services:
     buildCommand: bun install
     startCommand: (cd packages/ingest && bun run production)
     envVars:
-      - fromGroup: kong
+      - fromGroup: supabase - kong
       - key: NODE_VERSION
         value: lts
+      - key: BUN_VERSION
+        value: 1.1.0
       - key: REDIS_HOST
         fromService:
           type: redis
