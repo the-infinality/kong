@@ -6,3 +6,12 @@ spork:
     address: '0x1E0E030AbCb4f07de629DCCEa458a271e0E82624'
     defaultPrice: '1000000000000000000'
     assetId: PUSDUSD
+
+eoracle:
+  98866:
+    '0xdddd73f5df1f0dc31373357beac77545dc5a6f3f':
+      address: '0x59a7895030F0965F9141D66D63564C5bB589d592'
+  98867:
+    '0x1e0e030abcb4f07de629dccea458a271e0e82624':
+      address: '0x1d2a31e0647d39a4264184398A54C57C5Ef672c0'
+      defaultPrice: '100000000'

@@ -19,13 +19,22 @@ export const lens = {
   [arbitrum.id]: '0x043518AB266485dC085a1DB095B8d9C2Fc78E9b9' as `0x${string}`
 }
 
-const YamlConfigSchema = z.object({
+const PricesYamlConfigSchema = z.object({
   spork: z.array(z.object({
     chainId: z.number(),
     address: z.string(),
-    assetId: z.optional(z.string()),
-    defaultPrice: z.optional(z.string())
+    assetId: z.string(),
+    defaultPrice: z.string().optional()
   })),
+  eoracle: z.record(
+    z.string(), // chainId as string key
+    z.record(
+      z.string(), // address as string key
+      z.object({
+        address: z.string()
+      })
+    )
+  ),
 })
 
 const yamlPath = (() => {
@@ -36,7 +45,8 @@ const yamlPath = (() => {
 })()
 
 const yamlFile = fs.readFileSync(yamlPath, 'utf8')
-const pricesConfig = YamlConfigSchema.parse(yaml.load(yamlFile))
+const pricesConfig = PricesYamlConfigSchema.parse(yaml.load(yamlFile))
+
 
 export async function fetchErc20PriceUsd(chainId: number, token: `0x${string}`, blockNumber?: bigint, latest = false): Promise<{ priceUsd: number, priceSource: string }> {
   if (!blockNumber) {
@@ -53,16 +63,16 @@ async function __fetchErc20PriceUsd(chainId: number, token: `0x${string}`, block
   let result: Price | undefined
 
   if (latest) {
-    result = await fetchSporkPriceUsdCached(chainId, token, blockNumber)
-    await mq.add(mq.job.load.price, result)
-    if (result) return result
-
     result = await fetchYDaemonPriceUsd(chainId, token, blockNumber)
     await mq.add(mq.job.load.price, result)
     if (result) return result
   }
 
   result = await fetchDbPriceUsd(chainId, token, blockNumber)
+  if (result) return result
+
+  result = await fetchEOraclePriceUsd(chainId, token, blockNumber)
+  await mq.add(mq.job.load.price, result)
   if (result) return result
 
   result = await fetchLensPriceUsd(chainId, token, blockNumber)
@@ -83,6 +93,52 @@ async function __fetchErc20PriceUsd(chainId: number, token: `0x${string}`, block
   const empty = { chainId, address: token, priceUsd: 0, priceSource: 'na', blockNumber, blockTime: await getBlockTime(chainId, blockNumber) }
   await mq.add(mq.job.load.price, empty)
   return empty
+}
+
+
+async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, blockNumber: bigint) {
+  if (!(chainId in pricesConfig.eoracle)) return undefined
+
+  try {
+    const decimals = await cachedEOracleDecimals(chainId, token)
+
+    const price = await rpcs.next(chainId, blockNumber).readContract({
+      address: pricesConfig.eoracle[chainId.toString()][token.toLowerCase()]!.address as `0x${string}`,
+      functionName: 'latestAnswer',
+      args: [],
+      abi: parseAbi(['function latestAnswer() view returns (uint256)']),
+      blockNumber
+    }) as bigint
+
+    console.log('🔍', 'eOracle price', chainId, token, blockNumber, price)
+
+    if (price === 0n) return undefined
+
+    return PriceSchema.parse({
+      chainId,
+      address: token,
+      priceUsd: formatUnits(price, decimals),
+      priceSource: 'eoracle',
+      blockNumber,
+      blockTime: await getBlockTime(chainId, blockNumber)
+    })
+
+  } catch (error) {
+    console.warn('🚨', 'eOracle price failed', error)
+    return undefined
+  }
+}
+
+async function cachedEOracleDecimals(chainId: number, token: `0x${string}`): Promise<number> {
+  const cacheKey = `eOracleDecimals:${chainId}:${token}`
+  return await cache.wrap(cacheKey, async () => {
+    return await rpcs.next(chainId).readContract({
+      address: pricesConfig.eoracle[chainId.toString()][token.toLowerCase()]!.address as `0x${string}`,
+      functionName: 'decimals',
+      args: [],
+      abi: parseAbi(['function decimals() view returns (uint8)']),
+    }) as number
+  }, 2_592_000_000) // 30 days in milliseconds
 }
 
 async function fetchSporkPriceUsdCached(chainId: number, token: `0x${string}`, blockNumber: bigint) {

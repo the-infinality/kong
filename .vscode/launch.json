@@ -1,0 +1,25 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Ingest Package",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/ingest/index.ts",
+      "cwd": "${workspaceFolder}/packages/ingest",
+      "runtimeExecutable": "bun",
+      "runtimeArgs": [
+        "--inspect",
+        "dev"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    }
+  ]
+}
