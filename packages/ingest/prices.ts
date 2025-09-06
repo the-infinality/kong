@@ -97,13 +97,14 @@ async function __fetchErc20PriceUsd(chainId: number, token: `0x${string}`, block
 
 
 async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, blockNumber: bigint) {
-  if (!(chainId in pricesConfig.eoracle)) return undefined
+  const config = pricesConfig.eoracle[chainId.toString()][token.toLowerCase()]
+  if (config === undefined) return undefined
 
   try {
-    const decimals = await cachedEOracleDecimals(chainId, token)
+    const decimals = await cachedEOracleDecimals(chainId, config.address as `0x${string}`)
 
     const price = await rpcs.next(chainId, blockNumber).readContract({
-      address: pricesConfig.eoracle[chainId.toString()][token.toLowerCase()]!.address as `0x${string}`,
+      address: config.address as `0x${string}`,
       functionName: 'latestAnswer',
       args: [],
       abi: parseAbi(['function latestAnswer() view returns (uint256)']),
