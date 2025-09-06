@@ -139,11 +139,11 @@ async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, block
   }
 }
 
-async function cachedEOracleDecimals(chainId: number, token: `0x${string}`): Promise<number> {
-  const cacheKey = `eOracleDecimals:${chainId}:${token}`
+async function cachedEOracleDecimals(chainId: number, address: `0x${string}`): Promise<number> {
+  const cacheKey = `eOracleDecimals:${chainId}:${address}`
   return await cache.wrap(cacheKey, async () => {
     return await rpcs.next(chainId).readContract({
-      address: pricesConfig.eoracle[chainId.toString()][token.toLowerCase()]!.address as `0x${string}`,
+      address: address,
       functionName: 'decimals',
       args: [],
       abi: parseAbi(['function decimals() view returns (uint8)']),
