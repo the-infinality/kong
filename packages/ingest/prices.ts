@@ -100,6 +100,7 @@ async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, block
   const config = pricesConfig.eoracle[chainId.toString()][token.toLowerCase()]
   if (config === undefined) return undefined
 
+  console.log('🔍', 'Retrieving eOracle price for', chainId, token, blockNumber, "from:", config.address)
   try {
     const decimals = await cachedEOracleDecimals(chainId, config.address as `0x${string}`)
 
@@ -111,7 +112,7 @@ async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, block
       blockNumber
     }) as bigint
 
-    console.log('🔍', 'eOracle price', chainId, token, blockNumber, price)
+    console.log('🔍', 'eOracle price retrieved', chainId, token, blockNumber, price)
 
     if (price === 0n) return undefined
 
@@ -125,7 +126,7 @@ async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, block
     })
 
   } catch (error) {
-    console.warn('🚨', 'eOracle price failed', error)
+    console.log('🔍', 'eOracle price failed', chainId, token, blockNumber, "error:", error)
     return undefined
   }
 }
