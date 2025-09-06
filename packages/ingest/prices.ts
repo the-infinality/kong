@@ -63,6 +63,10 @@ async function __fetchErc20PriceUsd(chainId: number, token: `0x${string}`, block
   let result: Price | undefined
 
   if (latest) {
+    result = await fetchEOraclePriceUsd(chainId, token, blockNumber, latest)
+    await mq.add(mq.job.load.price, result)
+    if (result) return result
+
     result = await fetchYDaemonPriceUsd(chainId, token, blockNumber)
     await mq.add(mq.job.load.price, result)
     if (result) return result
@@ -96,13 +100,17 @@ async function __fetchErc20PriceUsd(chainId: number, token: `0x${string}`, block
 }
 
 
-async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, blockNumber: bigint) {
+async function fetchEOraclePriceUsd(chainId: number, token: `0x${string}`, blockNumber: bigint, latest = false) {
   const config = pricesConfig.eoracle[chainId.toString()][token.toLowerCase()]
   if (config === undefined) return undefined
 
   console.log('🔍', 'Retrieving eOracle price for', chainId, token, blockNumber, "from:", config.address)
   try {
     const decimals = await cachedEOracleDecimals(chainId, config.address as `0x${string}`)
+
+    if (latest) {
+      blockNumber = await getBlockNumber(chainId)
+    }
 
     const price = await rpcs.next(chainId, blockNumber).readContract({
       address: config.address as `0x${string}`,
