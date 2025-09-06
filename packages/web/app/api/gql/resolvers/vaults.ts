@@ -1,6 +1,6 @@
 import db from '@/app/api/db'
 import { compare } from '@/lib/compare'
-import { EvmAddressSchema } from 'lib/types'
+import { DefaultRiskScore, EvmAddressSchema, RiskScoreSchema } from 'lib/types'
 
 const vaults = async (_: object, args: {
   chainId?: number,
@@ -8,9 +8,12 @@ const vaults = async (_: object, args: {
   erc4626?: boolean,
   v3?: boolean,
   yearn?: boolean,
-  addresses?: string[]
+  addresses?: string[],
+  vaultType?: number,
+  riskLevel?: number,
+  unratedOnly?: boolean
 }) => {
-  const { chainId, apiVersion, erc4626, v3, yearn, addresses: rawAddresses } = args
+  const { chainId, apiVersion, erc4626, v3, yearn, addresses: rawAddresses, vaultType, riskLevel, unratedOnly } = args
 
   try {
 
@@ -34,7 +37,8 @@ const vaults = async (_: object, args: {
       address: row.address,
       ...row.defaults,
       ...row.snapshot,
-      ...row.hook
+      ...row.hook,
+      risk: row.hook.risk ?? DefaultRiskScore
     }))
 
     if (rawAddresses !== undefined) {
@@ -71,6 +75,23 @@ const vaults = async (_: object, args: {
     if (yearn !== undefined) {
       rows = rows.filter(row => {
         return Boolean(row.yearn ?? false) === yearn
+      })
+    }
+
+    if (vaultType !== undefined) {
+      rows = rows.filter(row => {
+        return Number(row.vaultType ?? 0) === vaultType
+      })
+    }
+
+    if (unratedOnly === true) {
+      rows = rows.filter(row => {
+        return row.risk?.riskLevel === undefined || row.risk?.riskLevel === 0
+      })
+    } else if (riskLevel !== undefined) {
+      rows = rows.filter(row => {
+        const rowRiskLevel = row.risk?.riskLevel
+        return rowRiskLevel !== undefined && rowRiskLevel > 0 && rowRiskLevel <= riskLevel
       })
     }
 
