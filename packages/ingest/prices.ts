@@ -64,20 +64,26 @@ async function __fetchErc20PriceUsd(chainId: number, token: `0x${string}`, block
 
   if (latest) {
     result = await fetchEOraclePriceUsd(chainId, token, blockNumber, latest)
-    await mq.add(mq.job.load.price, result)
-    if (result) return result
+    if (result) {
+      await mq.add(mq.job.load.price, result)
+      return result
+    }
 
     result = await fetchYDaemonPriceUsd(chainId, token, blockNumber)
-    await mq.add(mq.job.load.price, result)
-    if (result) return result
+    if (result) {
+      await mq.add(mq.job.load.price, result)
+      return result
+    }
   }
 
   result = await fetchDbPriceUsd(chainId, token, blockNumber)
   if (result) return result
 
   result = await fetchEOraclePriceUsd(chainId, token, blockNumber)
-  await mq.add(mq.job.load.price, result)
-  if (result) return result
+  if (result) {
+    await mq.add(mq.job.load.price, result)
+    return result
+  }
 
   result = await fetchLensPriceUsd(chainId, token, blockNumber)
   if (result) {
